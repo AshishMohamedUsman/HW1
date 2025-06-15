@@ -1,0 +1,97 @@
+---
+title: "STAT40830 - Homework 1"
+author: "Ashish Mohamed Usman 24201306"
+format: pdf
+execute:
+  echo: false
+---
+
+# *Introduction*
+
+This analysis presents a relationship between the **number of drivers killed** and time, before and after seatbelt legislation was introduced in the UK. The legislation came into effect in **January 1983**, and its impact can be observed through changes in the number of monthly road casualties.
+
+The R built-in dataset used in this report is **Seatbelts** from the `datasets` package. It contains monthly UK road casualty statistics from **January 1969 to December 1984**, across various categories.
+
+## ***Understanding Dataset :***
+
+```{r}
+# Loading the Seatbelts dataset
+data(Seatbelts)
+
+# Displaying the structure of the dataset
+# This shows the number of observations, variables, and data type
+str(Seatbelts)
+```
+
+The `Seatbelts` dataset has **192 monthly observations** and includes the following variables:
+
+```{r}
+head(Seatbelts)
+```
+
+**DriversKilled** : Car drivers killed\
+**drivers** : Car drivers killed or seriously injured\
+**front** : Front-seat passengers killed or seriously injured\
+**rear** : Rear-seat passengers killed or seriously injured\
+**kms** : Distance driven (km)\
+**PetrolPrice** : Petrol price\
+**VanKilled** : Van driver casualties\
+**law** : 1 if seatbelt law is in effect, 0 otherwise
+
+## *Data Summary :*
+
+Below is a descriptive summary of the main variable - 'DriversKilled' used in the graph:
+
+```{r}
+#| echo: false
+
+# Showing summary statistics for the number of drivers killed per month
+summary(Seatbelts[, "DriversKilled"])
+
+```
+
+The number of drivers killed per month ranges from a **minimum of 60** to a **maximum of 198**, with a **median of 118.5**, indicating that half of the observations fall below this value.
+
+The **mean is 122.8**, which is slightly higher than the median, suggesting a slight **right-skew** in the distribution.
+
+The **1st quartile** is 104.8 and the **3rd quartile** is 138.0, showing that 50% of the values lie within this range.
+
+## *Plot :*
+
+The following plot displays the number of **drivers killed per month**, with a red dashed line indicating the start of the seatbelt law.
+
+```{r}
+# Loading ggplot2 package for plotting
+library(ggplot2)
+
+# Converting the Seatbelts time series to a data frame with date and variables
+df <- data.frame(
+  # Monthly dates
+  date = seq(as.Date("1969-01-01"), as.Date("1984-12-01"), by = "month"), 
+  # Number of drivers killed each month
+  DriversKilled = as.numeric(Seatbelts[, "DriversKilled"]),   
+  # 0 or 1 indicating if seatbelt law was in effect
+  law = as.numeric(Seatbelts[, "law"])                                     
+)
+
+# Create the plot
+ggplot(df, aes(x = date, y = DriversKilled)) +
+   # Line plot in dark blue
+  geom_line(color = "darkblue", linewidth = 1) +      
+  # Red dashed line for seatbelt law start
+  geom_vline(xintercept = as.Date("1983-01-01"), linetype = "dashed", 
+             color = "red") +                                              
+  labs(
+    title = "Monthly UK Driver Deaths (1969–1984)",   # Title of the plot                     
+    x = "Date", # X-axis label                                                           
+    y = "Drivers Killed"  # Y-axis label                                                 
+  ) +
+  theme_minimal()                                                         
+
+```
+
+## *Description of the Plot :*
+
+The time series plot illustrates the **monthly number of drivers killed in the UK from 1969 to 1984**. A clear **seasonal pattern** is visible, with regular peaks and troughs occurring each year, typically higher in certain months, likely corresponding to increased travel periods.
+
+A **red dashed vertical line** marks **January 1983**, when **seatbelt legislation** was introduced. Following this date, there is a **notable decrease in fatalities**, suggesting that the implementation of mandatory seatbelt use had a **positive impact on road safety**, reducing the number of driver deaths in subsequent months.
